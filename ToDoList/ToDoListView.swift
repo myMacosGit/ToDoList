@@ -8,34 +8,30 @@
 import SwiftUI
 
 struct ToDoListView: View {
+    
+    var toDos = ["learn swift",
+                 "build apps",
+                 "bring the awesome",
+                 "take a vacations"]        // can not format ctrl+I, on separate line?
+    
+    
     var body: some View {
         NavigationStack {
             List {
-                Section {
+                
+                ForEach(toDos, id: \.self) { toDo in
                     NavigationLink {
-                        DetailView()
+                        DetailView(passedValue: toDo)
                     } label: {
-                        Text("Winter")
+                        Text(toDo)
                     }
-                    Text("Summer")
-
-                } header: {                // unusual
-                    Text("Breaks")
-                }
-                Section {
-                    
-                    Text("Sprint")
-                    Text("Fall")
-                } header: {
-                    Text("Semesters")
                 }
             } // List
-            .navigationTitle("School Year")
+            .navigationTitle("To Do List")
             .navigationBarTitleDisplayMode(.automatic)
             .listStyle(.grouped)
             
             
-            // not after Nav Stack
         } // NavigationStack
         
         
