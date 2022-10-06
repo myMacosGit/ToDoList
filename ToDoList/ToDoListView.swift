@@ -25,18 +25,15 @@ struct ToDoListView: View {
                     } label: {
                         Text(toDo)
                     }
-                }
+                    .font(.largeTitle)
+                } // ForEach
             } // List
             .navigationTitle("To Do List")
             .navigationBarTitleDisplayMode(.automatic)
             .listStyle(.grouped)
-            
-            
         } // NavigationStack
-        
-        
     } // body
-}
+} // View
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
