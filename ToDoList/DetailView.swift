@@ -29,7 +29,7 @@ struct DetailView: View {
             
         } // VStack
         .padding()
-        .navigationBarBackButtonHidden()
+        ///.navigationBarBackButtonHidden()
     }
 }
 
