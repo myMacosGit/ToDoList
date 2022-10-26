@@ -18,7 +18,6 @@ struct DetailView: View {
     
     @State var toDo: ToDo  // struct  - receive from sheet or naviagation stack link,
                            // not private accessed from previous screen ?
-    var        newToDo = false
     
     //***************************************
     
@@ -64,7 +63,7 @@ struct DetailView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Save") {
                     // if new, append to toDoVM.todos else update the toDo that was passed in from the List
-                    toDosVM.saveToDo(toDo: toDo, newToDo: newToDo)
+                    toDosVM.saveToDo(toDo: toDo)
                     dismiss()
                     
                 } // Button

@@ -14,9 +14,11 @@ import Foundation
 //
 // MODEL <--> VIEW MODEL <--> VIEW
 
-struct ToDo : Identifiable {
-    let id = UUID().uuidString  // change var to let, see as string
-    
+struct ToDo : Identifiable, Codable {
+    ///let id = UUID().uuidString  // change var to let, see as string
+
+    var id : String?
+
     var item  = ""
     var reminderIsOn = false
     var dueDate = Date.now + (60*60*24)
@@ -25,6 +27,6 @@ struct ToDo : Identifiable {
     
     func prt()
     {
-        print(self.id)
+        print(self)
     }
 } // ToDo§

@@ -31,18 +31,26 @@ class ToDosViewModel : ObservableObject {  // for class
     
     init() {
         // Temp data here
-        toDos.append(ToDo(item: "Learn Swift")) // add struct data to toDos array
-        toDos.append(ToDo(item: "Build Apps"))
-        toDos.append(ToDo(item: "Change Swift"))
+        ///toDos.append(ToDo(id:UUID().uuidString, item: "Learn Swift")) // add struct data to toDos array
+        ///toDos.append(ToDo(id:UUID().uuidString, item: "Build Apps"))  // created struct has no id defined
+        ///toDos.append(ToDo(id:UUID().uuidString, item: "Change Swift"))
+        
+
+        /// purgeData()
+        loadData()
         
         nrTimesCalled += 1
         
         let _ = print("init - ToDosViewModel")
     } // init
     
-    func saveToDo (toDo: ToDo, newToDo: Bool) {
-        if newToDo {
-            toDos.append(toDo)
+    func saveToDo (toDo: ToDo) {
+        // Defined with Let and parameters can not changed
+        // If new then add else update existing toDo that was passed from List
+        if toDo.id == nil {
+            var newToDo = toDo
+            newToDo.id = UUID().uuidString
+            toDos.append(newToDo)
         } else {
             let _ = print("\n ****** old \(toDo)  \n")
             if let index =
@@ -50,18 +58,56 @@ class ToDosViewModel : ObservableObject {  // for class
                 toDos[index] = toDo
             }
         } // if
-               
+        saveData()
+
     } // saveToDo
     
-    func delete (indexSet: IndexSet) {
+    func deleteToDo (indexSet: IndexSet) {
         toDos.remove(atOffsets: indexSet)
+        saveData()
     }
     
-    func move (fromOffsets:IndexSet, toOffsets: Int) {
+    func moveToDo (fromOffsets:IndexSet, toOffsets: Int) {
         toDos.move(fromOffsets: fromOffsets, toOffset: toOffsets)
-        
+        saveData()
     }
+    
+    func saveData() {
+        let path = URL.documentsDirectory.appending(component: "toDos")
+        let data = try? JSONEncoder().encode(toDos)   // ignore any errors
+                                                      // if error thrown, data is nil
+        do {
+            try data?.write(to: path)  // if data nil, then do not write
+            
+            // let a = Array(data!) all hex characters
+        } catch {
+            print ("😀ERROR: Could not save date \(error.localizedDescription)")
+        }
+    } // saveData
 
+    func loadData() {
+        let path = URL.documentsDirectory.appending(component: "toDos")
+        guard let data = try? Data(contentsOf: path) else { return }
+        do {
+            toDos = try JSONDecoder().decode(Array<ToDo>.self, from: data)
+        } catch {
+            print ("😀ERROR: Could not read date \(error.localizedDescription)")
+        }
+    } // loadData
+
+    func purgeData() {
+        let path = URL.documentsDirectory.appending(component: "toDos")
+        let data = try? JSONEncoder().encode("")
+                                                   
+        do {
+            try data?.write(to: path)  // if data nil, then do not write
+            
+            // let a = Array(data!) all hex characters
+        } catch {
+            print ("😀ERROR: Could not save date \(error.localizedDescription)")
+        }
+    } // purgeData
     
 } // ToDosViewModel
+
 

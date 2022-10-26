@@ -17,7 +17,7 @@
 import SwiftUI
 
 struct DumpingEnvironmentx<V: View>: View {
-                      
+    
     @Environment(\.self) var env
     let content: V
     var body: some View {
@@ -33,40 +33,41 @@ struct ToDoListView: View {
     @State private var sheetIsPresented = false
     @EnvironmentObject var toDosVM: ToDosViewModel
     
-     var body: some View {
-         
-         let _ = print("ToDoListView ref \(Unmanaged.passUnretained(toDosVM).toOpaque())")
-         
+    var body: some View {
+        
+        let _ = print("ToDoListView ref \(Unmanaged.passUnretained(toDosVM).toOpaque())")
+        
         NavigationStack {
             List {
                 ForEach(toDosVM.toDos) { toDo in     // published property
                     NavigationLink {
                         // Pass in existing ToDo struct to view
-                        DetailView(toDo: toDo, newToDo: false)
+                        DetailView(toDo: toDo)
                     } /* NavigationLink */
-                    label: {
-                        Text(toDo.item)
-                    } // label
-                    .font(.largeTitle)
+                label: {
+                    Text(toDo.item)
+                } // label
+                .font(.largeTitle)
                 }  // ForEach
+                
+                
                 // Shorthand calls to onDelete and onMove
-
-
-                .onDelete(perform: toDosVM.delete)   // in the wild
-                .onMove(perform: toDosVM.move)
-
-
+                                
+                .onDelete(perform: toDosVM.deleteToDo)   // in the wild
+                .onMove(perform: toDosVM.moveToDo)
+                
+                
                 // Traditional calls
-//                .onDelete { indexSet in
-//                    /// toDosVM.toDos.remove(atOffsets: indexSet)
-//                    toDosVM.delete(indexSet: indexSet)
-//                }
-//                .onMove { fromOffsets, toOffsets in
-//                    ///toDosVM.toDos.move(fromOffsets: fromOffsets, toOffset: toOffsets)
-//                    toDosVM.move(fromOffsets: fromOffsets, toOffsets: toOffsets)
-//                }
-//
-                        
+                //                .onDelete { indexSet in
+                //                    /// toDosVM.toDos.remove(atOffsets: indexSet)
+                //                    toDosVM.delete(indexSet: indexSet)
+                //                }
+                //                .onMove { fromOffsets, toOffsets in
+                //                    ///toDosVM.toDos.move(fromOffsets: fromOffsets, toOffset: toOffsets)
+                //                    toDosVM.move(fromOffsets: fromOffsets, toOffsets: toOffsets)
+                //                }
+                //
+                
             } // List
             .navigationTitle("To Do List")
             .navigationBarTitleDisplayMode(.automatic)
@@ -75,29 +76,29 @@ struct ToDoListView: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     EditButton()
                 } // item
-
+                
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         sheetIsPresented.toggle()
                     } /* Button */
-                    label: {
-                        Image(systemName: "plus")
-                    } // label
+                label: {
+                    Image(systemName: "plus")
+                } // label
                 } // item
             } // toolbar
             .sheet(isPresented: $sheetIsPresented) {
                 NavigationStack {
                     // Create a blank toDo struct and pass to DetailView
                     // to be filled in by view
-                    DetailView(toDo: ToDo(notes:"To be filled in"), newToDo: true)
+                    DetailView(toDo: ToDo(notes:"To be filled in"))
                     
                 }
                 //.fullScreenCover(isPresented: $sheetIsPresented) {
                 //    DetailView(passedValue: "") // Full screen sheet
             } // .sheet
-
+            
             // TODO: DumpingEnvironment(optimized: true, content: Text(""))
-
+            
         } // NavigationStack
     } // body
 }
@@ -105,7 +106,7 @@ struct ToDoListView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ToDoListView()
-          .environmentObject(ToDosViewModel())  // needs an object
+            .environmentObject(ToDosViewModel())  // needs an object
     }
 }
 
