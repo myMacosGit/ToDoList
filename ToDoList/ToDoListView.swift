@@ -49,11 +49,33 @@ struct ToDoListView: View {
                     } // label
                     .font(.largeTitle)
                 }  // ForEach
+                // Shorthand calls to onDelete and onMove
+
+
+                .onDelete(perform: toDosVM.delete)   // in the wild
+                .onMove(perform: toDosVM.move)
+
+
+                // Traditional calls
+//                .onDelete { indexSet in
+//                    /// toDosVM.toDos.remove(atOffsets: indexSet)
+//                    toDosVM.delete(indexSet: indexSet)
+//                }
+//                .onMove { fromOffsets, toOffsets in
+//                    ///toDosVM.toDos.move(fromOffsets: fromOffsets, toOffset: toOffsets)
+//                    toDosVM.move(fromOffsets: fromOffsets, toOffsets: toOffsets)
+//                }
+//
+                        
             } // List
             .navigationTitle("To Do List")
             .navigationBarTitleDisplayMode(.automatic)
             .listStyle(.grouped)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    EditButton()
+                } // item
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         sheetIsPresented.toggle()
@@ -78,7 +100,6 @@ struct ToDoListView: View {
 
         } // NavigationStack
     } // body
-
 }
 
 struct ContentView_Previews: PreviewProvider {

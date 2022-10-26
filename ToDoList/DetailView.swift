@@ -58,20 +58,17 @@ struct DetailView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button("Cancel") {
                     dismiss()
-                }
+                } // button
             } // item
             
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Save") {
-                    // TODO: add save
                     // if new, append to toDoVM.todos else update the toDo that was passed in from the List
-                    if newToDo {
-                        toDosVM.toDos.append(toDo)
-                        dismiss()
-                    } else {
-                        let _ = print("\n ****** old \(toDo)  \n")
-                    }
-                }
+                    toDosVM.saveToDo(toDo: toDo, newToDo: newToDo)
+                    dismiss()
+                    
+                } // Button
+
             } // item
             
         } // toolbar
