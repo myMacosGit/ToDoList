@@ -5,26 +5,50 @@
 //  Created by Richard Isaacs on 06.10.22.
 //
 
+
+//******//
+// VIEW //
+//******//
+//
+// MODEL <--> VIEW MODEL <--> VIEW
+//
+// struct      class          view
+
 import SwiftUI
 
-struct ToDoListView: View {
-    @State private var sheetIsPresented = false
-    var toDos = ["learn swift",
-                 "build apps",
-                 "bring the awesome",
-                 "take a vacations"]        // can not format ctrl+I, on separate line?
-    
+struct DumpingEnvironmentx<V: View>: View {
+                      
+    @Environment(\.self) var env
+    let content: V
     var body: some View {
+        dump(env)
+        return content
+    }
+}
+
+// [EnvironmentPropertyKey<StoreKey<ToDosViewModel>> = Optional(ToDoList.ToDosViewModel),
+
+struct ToDoListView: View {
+    
+    @State private var sheetIsPresented = false
+    @EnvironmentObject var toDosVM: ToDosViewModel
+    
+     var body: some View {
+         
+         let _ = print("ToDoListView ref \(Unmanaged.passUnretained(toDosVM).toOpaque())")
+         
         NavigationStack {
             List {
-                ForEach(toDos, id: \.self) { toDo in
+                ForEach(toDosVM.toDos) { toDo in     // published property
                     NavigationLink {
-                        DetailView(passedValue: toDo)
-                    } label: {
-                        Text(toDo)
-                    }
+                        // Pass in existing ToDo struct to view
+                        DetailView(toDo: toDo, newToDo: false)
+                    } /* NavigationLink */
+                    label: {
+                        Text(toDo.item)
+                    } // label
                     .font(.largeTitle)
-                }
+                }  // ForEach
             } // List
             .navigationTitle("To Do List")
             .navigationBarTitleDisplayMode(.automatic)
@@ -33,24 +57,34 @@ struct ToDoListView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         sheetIsPresented.toggle()
-                    } label: {
+                    } /* Button */
+                    label: {
                         Image(systemName: "plus")
-                    }
+                    } // label
                 } // item
             } // toolbar
             .sheet(isPresented: $sheetIsPresented) {
-                DetailView(passedValue: "")         // Apple sheet
+                NavigationStack {
+                    // Create a blank toDo struct and pass to DetailView
+                    // to be filled in by view
+                    DetailView(toDo: ToDo(notes:"To be filled in"), newToDo: true)
+                    
+                }
                 //.fullScreenCover(isPresented: $sheetIsPresented) {
                 //    DetailView(passedValue: "") // Full screen sheet
-            }
+            } // .sheet
+
+            // TODO: DumpingEnvironment(optimized: true, content: Text(""))
+
         } // NavigationStack
-        
     } // body
+
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ToDoListView()
+          .environmentObject(ToDosViewModel())  // needs an object
     }
 }
 
