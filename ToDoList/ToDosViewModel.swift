@@ -29,13 +29,16 @@ class ToDosViewModel : ObservableObject {  // for class
     @Published var toDos: [ToDo] = []   // like @State ObservableObjects, for properties
     @Published var nrTimesCalled = 0   // like @State ObservableObjects, for properties
     
+    
+    var testDos: [ToDo] = []   // like @State ObservableObjects, for properties
+    
+    
     init() {
         // Temp data here
         ///toDos.append(ToDo(id:UUID().uuidString, item: "Learn Swift")) // add struct data to toDos array
         ///toDos.append(ToDo(id:UUID().uuidString, item: "Build Apps"))  // created struct has no id defined
         ///toDos.append(ToDo(id:UUID().uuidString, item: "Change Swift"))
         
-
         /// purgeData()
         loadData()
         
@@ -44,12 +47,38 @@ class ToDosViewModel : ObservableObject {  // for class
         let _ = print("init - ToDosViewModel")
     } // init
     
+    func toggleIsCompleted(toDo: ToDo) {
+            // Do no try to update if toDos.id == nil, never should be
+        guard toDo.id != nil else { return }
+        
+        if let index =  toDos.firstIndex(where: {$0.id == toDo.id} ) {
+
+            print ("toggle1 \(index)  \(toDos[index])")
+            toDos[index].isCompleted.toggle()
+            print ("toggle2   \(toDos[index])")
+        }
+       
+        // Copy toDo is constant into a newToDos (var) so we can update the isCompleted
+
+        /*
+        var newToDo = toDo
+        newToDo.isCompleted.toggle()
+        // Find the ID for the newToDo in the array of toDos, the update at that index
+        if let index = toDos.firstIndex(where: {$0.id == newToDo.id} ) {
+            toDos[index] = newToDo
+        }
+         */
+        saveData()
+        
+    } // toggleIsCompleted
+    
     func saveToDo (toDo: ToDo) {
         // Defined with Let and parameters can not changed
         // If new then add else update existing toDo that was passed from List
+
         if toDo.id == nil {
             var newToDo = toDo
-            newToDo.id = UUID().uuidString
+            newToDo.id = UUID().uuidString  // error, is let     toDo.id = UUID().uuidString
             toDos.append(newToDo)
         } else {
             let _ = print("\n ****** old \(toDo)  \n")
@@ -57,6 +86,8 @@ class ToDosViewModel : ObservableObject {  // for class
                 toDos.firstIndex(where: {$0.id == toDo.id} ) {
                 toDos[index] = toDo
             }
+            
+            
         } // if
         saveData()
 
@@ -104,10 +135,29 @@ class ToDosViewModel : ObservableObject {  // for class
             
             // let a = Array(data!) all hex characters
         } catch {
-            print ("😀ERROR: Could not save date \(error.localizedDescription)")
+            print ("😀ERROR: Could not purge date \(error.localizedDescription)")
         }
     } // purgeData
     
+    func saveInit() {
+        toDos.removeAll()  // remove all toDos
+        
+        toDos.append(ToDo(id:UUID().uuidString, item: "Learn Swift")) // add struct data to toDos array
+        toDos.append(ToDo(id:UUID().uuidString, item: "Build Apps"))  // created struct has no id defined
+        toDos.append(ToDo(id:UUID().uuidString, item: "Change Swift"))
+ 
+        let path = URL.documentsDirectory.appending(component: "toDos")
+        let data = try? JSONEncoder().encode("toDos")   // ignore any errors
+                                                      // if error thrown, data is nil
+        do {
+            try data?.write(to: path)  // if data nil, then do not write
+            
+            // let a = Array(data!) all hex characters
+        } catch {
+            print ("😀ERROR: Could not saveInit date \(error.localizedDescription)")
+        }
+    } // saveData
+    
+    
+
 } // ToDosViewModel
-
-

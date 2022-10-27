@@ -40,19 +40,30 @@ struct ToDoListView: View {
         NavigationStack {
             List {
                 ForEach(toDosVM.toDos) { toDo in     // published property
-                    NavigationLink {
-                        // Pass in existing ToDo struct to view
-                        DetailView(toDo: toDo)
-                    } /* NavigationLink */
-                label: {
-                    Text(toDo.item)
-                } // label
-                .font(.largeTitle)
+                    
+                    HStack {
+                        
+                        Image(systemName: toDo.isCompleted ? "checkmark.rectangle" : "rectangle")
+                            .onTapGesture {
+                                toDosVM.toggleIsCompleted(toDo: toDo)
+                            }
+                        
+                        NavigationLink {
+                            // Pass in existing ToDo struct to view
+                            DetailView(toDo: toDo)
+                        } /* NavigationLink */
+                    label: {
+                        Text(toDo.item)
+                    } // label
+                        
+                    } // HStack
+                    .font(.largeTitle)
+                    
                 }  // ForEach
                 
                 
                 // Shorthand calls to onDelete and onMove
-                                
+                
                 .onDelete(perform: toDosVM.deleteToDo)   // in the wild
                 .onMove(perform: toDosVM.moveToDo)
                 

@@ -65,10 +65,19 @@ struct DetailView: View {
                     // if new, append to toDoVM.todos else update the toDo that was passed in from the List
                     toDosVM.saveToDo(toDo: toDo)
                     dismiss()
-                    
                 } // Button
-
             } // item
+
+            ToolbarItem(placement: .bottomBar) {
+                Button("Init") {
+                    // if new, append to toDoVM.todos else update the toDo that was passed in from the List
+                    // toDosVM.purgeData()
+                    toDosVM.saveInit()
+                    dismiss()
+                } // Button
+            } // item
+
+            
             
         } // toolbar
         .navigationBarBackButtonHidden()
